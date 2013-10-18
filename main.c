@@ -15,7 +15,6 @@
 #pragma config POSCMOD = HS, FNOSC = PRIPLL, FPBDIV = DIV_8
 
 #define SYS_FREQ (80000000L)
-#define PER_FREQ (10000000L) //Note: This does not control the frequency. It's just reflective of what it is.
 
 #include "FIFOSPI.h"
 
@@ -63,7 +62,8 @@ int main(int argc, char** argv)
     k = FIFOSPI2_QueueRead(&j);
     k = FIFOSPI2_QueueRead(&j);
     k = FIFOSPI2_QueueRead(&j);
-    
+    DelayTime(10);
+
     while(1)
     {
 
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
         ReadReg[1] = 0x08;
         ReadReg[2] = 0x00;
         FIFOSPI2_QueueSend(ReadReg, 3); //Doesn't work with 2
-        DelayTime(100);
+        DelayTime(400);
         k = FIFOSPI2_QueueRead(&j);
         k = FIFOSPI2_QueueRead(&j);
         k = FIFOSPI2_QueueRead(&j);
