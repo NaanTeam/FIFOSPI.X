@@ -26,6 +26,52 @@ int SendSPI2(unsigned char data);
  */
 void DelayTime(int ms);
 
+void readAll()
+{
+    char k, j;
+
+    //Read the X Acceleration
+    char ReadReg[10];
+    ReadReg[0] = 0x0B;
+    ReadReg[1] = 0x0E;
+    ReadReg[2] = 0x00; //X
+    ReadReg[3] = 0x00;
+    ReadReg[4] = 0x00; //Y
+    ReadReg[5] = 0x00;
+    ReadReg[6] = 0x00; //Z
+    ReadReg[7] = 0x00;
+    ReadReg[8] = 0x00; //Temp
+    ReadReg[9] = 0x00;
+    FIFOSPI2_QueueSend(ReadReg, 10);
+    DelayTime(10);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+}
+
+void readOne()
+{
+    char k, j;
+
+    //Read the X Acceleration
+    char ReadReg[10];
+    ReadReg[0] = 0x0B;
+    ReadReg[1] = 0x08;
+    ReadReg[2] = 0x00; //X
+    FIFOSPI2_QueueSend(ReadReg, 3);
+    DelayTime(10);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+}
+
 int main(int argc, char** argv)
 {
     TRISFbits.TRISF0 = 0; //LD4 on chipkit uno32
@@ -47,7 +93,8 @@ int main(int argc, char** argv)
     reset[1] = 0x1F;
     reset[2] = 0x52;
     FIFOSPI2_QueueSend(reset, 3);
-    DelayTime(10);
+    DelayTime(1);
+
     k = FIFOSPI2_QueueRead(&j);
     k = FIFOSPI2_QueueRead(&j);
     k = FIFOSPI2_QueueRead(&j);
@@ -58,25 +105,25 @@ int main(int argc, char** argv)
     ReadReg[1] = 0x2D;
     ReadReg[2] = 0x02;
     FIFOSPI2_QueueSend(ReadReg, 3);
+    ReadReg[0] = 0x0B;
+    ReadReg[1] = 0x08;
+    ReadReg[2] = 0x00;
+    FIFOSPI2_QueueSend(ReadReg, 3); //Follow it with a measurement read.
+
     DelayTime(10);
     k = FIFOSPI2_QueueRead(&j);
     k = FIFOSPI2_QueueRead(&j);
     k = FIFOSPI2_QueueRead(&j);
-    DelayTime(10);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    k = FIFOSPI2_QueueRead(&j);
+    DelayTime(15);
 
     while(1)
     {
-
-        //Read the X Acceleration
-        char ReadReg[3];
-        ReadReg[0] = 0x0B;
-        ReadReg[1] = 0x08;
-        ReadReg[2] = 0x00;
-        FIFOSPI2_QueueSend(ReadReg, 3); //Doesn't work with 2
-        DelayTime(400);
-        k = FIFOSPI2_QueueRead(&j);
-        k = FIFOSPI2_QueueRead(&j);
-        k = FIFOSPI2_QueueRead(&j);
+        readAll();
+        //readOne();
+        DelayTime(10);
         
     }
     return (EXIT_SUCCESS);
